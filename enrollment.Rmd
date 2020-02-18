@@ -7,5 +7,23 @@ output: html_document
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(janitor)
+library(readxl)
 ```
 
+```{r}
+top_enrollment <- read_excel("class_enrollment_summary_by_term2.18.20.xlsx", skip = 3) %>%
+  clean_names() %>%
+  group_by(course_department) %>%
+  summarize(sum = sum(total)) %>%
+  arrange(desc(sum)) %>%
+  slice(1:5)
+
+top_courses <- enrollment %>%
+  clean_names() %>%
+  right_join(top_enrollment, by = "course_department") %>%
+  group_by(course_department) %>%
+  filter(total == max(total))
+
+```
